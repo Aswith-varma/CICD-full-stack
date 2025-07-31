@@ -1,41 +1,28 @@
-cd.yml
-------
-name: Deploy React App to GitHub Pages
+name: React Vite CI
 
 on:
   push:
-    branches: [main]
-
-permissions:
-  contents: write  
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build the project
         run: npm run build
-
-      - name: Configure Git identity
-        run: |
-          git config --global user.name "Aswith-varma"
-          git config --global user.email "aswithvarma54@gmail.com"
-
-      - name: Authenticate and deploy to GitHub Pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-          npm run deploy
